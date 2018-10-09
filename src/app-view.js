@@ -13,8 +13,6 @@ let ENTER_KEY = 13;
 export let AppView = View.extend({
 
   initialize(options) {
-    console.log('options in appview');
-    console.log(options);
     TodoFilter = options.todofilter || '';
     TodoList = options.todolist || {};
 

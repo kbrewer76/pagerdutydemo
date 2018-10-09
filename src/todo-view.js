@@ -9,20 +9,21 @@ export let TodoView = View.extend({
 
   tagName: 'li',
   initialize(options) {
-    console.log('view options');
-    console.log(options);
     TodoFilter = options.todofilter || '';
 
     this.template = ({
       completed,
       title
     }) => `
-    <div class="view">
+    <div class="view" style="position:relative">
+    <div style="display:inline-block">
     <input class="toggle" type="checkbox"${completed ? 'checked' : ''}>
     <label>${title}</label>
-    <button class="destroy"></button>
     </div>
-    <input class="edit" value="${title}">
+    <div style="display:inline-block; float:right">
+    <a class="destroy">Delete</a>
+    </div>
+    </div>
     `;
 
     this.input = '';
@@ -37,7 +38,7 @@ export let TodoView = View.extend({
 
   events: {
     'click .toggle': 'toggleCompleted',
-    'dblclick label': 'edit',
+    // 'dblclick label': 'edit',
     'click .destroy': 'clear',
     'keypress .edit': 'updateOnEnter',
     'blur .edit': 'close'
@@ -46,6 +47,7 @@ export let TodoView = View.extend({
   render() {
     this.$el.html(this.template(this.model.toJSON()));
     this.$el.toggleClass('completed', this.model.get('completed'));
+    this.$el.find('label').toggleClass('markcomplete', this.model.get('completed'));
     this.toggleVisible();
     this.input = this.$('.edit');
     return this;
@@ -56,15 +58,6 @@ export let TodoView = View.extend({
   },
 
 
-  /* THIS IS A DERIVED PROPERTY */
-  // get isHidden() {
-  //   var isCompleted = this.model.get('completed'); 
-  //   return (
-  //     (!isCompleted && TodoFilter === 'completed') ||
-  //     (isCompleted && TodoFilter === 'active')
-  //   );
-  // },
-
   setIsHidden() {
     let isCompleted = this.model.get('completed');
     return (
@@ -74,16 +67,17 @@ export let TodoView = View.extend({
 
   },
 
-  toggleCompleted() {
+  toggleCompleted(evt) {
     this.model.toggle();
+    this.$el.find('label').toggleClass('markcomplete', this.model.get('completed'));
   },
 
-  edit() {
-    let value = this.input.val();
+  // edit() {
+  //   let value = this.input.val();
 
-    this.$el.addClass('editing');
-    this.input.val(value).focus();
-  },
+  //   this.$el.addClass('editing');
+  //   this.input.val(value).focus();
+  // },
 
   close() {
     let title = this.input.val();
